@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV !== "production"){
+if(process.env.NODE_ENV !== "production"){ // usar a database local apenas se estivermos no nosso ambiente de desenvolvimento
     require('dotenv').config()
 }
 
@@ -23,8 +23,10 @@ app.use(express.urlencoded({limit: '10mb', extended: false }))
 
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
+mongoose.connect(process.env.DATABASE_URL, { //  no local queremos usar uma database local (LINHA 1 SERVER.JS)
+    //mas já em um server a gente quer conectar com uma database que esta em algum servidor
+    
+    useNewUrlParser: true, // usar a nova forma de acessar data no mongodb 
     useUnifiedTopology: true
 })
 const db = mongoose.connection

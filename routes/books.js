@@ -1,21 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Book = require('../models/book')
-
-const path = require('path')
-const fs = require('fs')
-const multer = require('multer')
-const uploadPath = path.join('public',Book.coverImageBasePath)
 const imageMimeTypes = ['image/jpge','image/png','image/gif']
-
 const Author = require('../models/author')
 
-const upload = multer({
-    dest: uploadPath,
-    fileFilter: (req,file,callback) => {
-        callback(null,imageMimeTypes.includes(file.mimetype)) // returns true se o tipo de file tar na lista
-    }
-})
 
 // All Books Route
 router.get('/', async (req,res) => {
@@ -35,7 +23,7 @@ router.get('/', async (req,res) => {
         const books = await query.exec()
         res.render('books/index',{
             books,
-            searchOptions: req.query
+            searchOptions: req.query // salvar as opções de pesquisa pra quando ele pesquisar
         })
     } catch (error) {
         res.redirect('/')
@@ -44,11 +32,11 @@ router.get('/', async (req,res) => {
 
 //New Books  Route
 router.get('/new', async (req,res) => {
-   renderNewPage(res,new Book())
+   renderNewPage(res,new Book()) // mesma logica do /new do author
 })
 
-// Create Books Route
-router.post('/', upload.single('cover'),  async (req,res) => {  // Responder a uma solicitação POST na rota raiz do authors (POST ROUTE)
+// Create Books Route    //single file and cover is the name of the upload file input
+router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na rota raiz do authors (POST ROUTE)
     const fileName = req.file != null ? req.file.filename : null
     const book = new Book({
         title: req.body.title,
@@ -58,23 +46,20 @@ router.post('/', upload.single('cover'),  async (req,res) => {  // Responder a u
         coverImageName: fileName,
         description: req.body.description
     })
-
+    saveCover(book,req.body.cover)
+ 
     try {
         const newBook =  await book.save()    
         // res.redirect(`books/${newBook.id}`)
         res.redirect('books')
     } catch (error) {
+        console.log(error)
         renderNewPage(res,book,true)
     }
 
 })
 
 
-function removeBookCover(fileName){
-    fs.unlink(path.join(uploadPath,fileName),err => {
-        if(err) console.error(err)
-    })
-}
 
 async function renderNewPage(res, book, hasError = false){
     try {
@@ -86,13 +71,20 @@ async function renderNewPage(res, book, hasError = false){
         if(hasError) params.errorMessage = 'Error Creating Book'
         res.render('books/new',params)
     } catch (error) {
-        if(book.coverImageName != null){
-            removeBookCover(book.coverImageName)
-        }
+        console.log(error)
         res.redirect('/books')
     }
 }
 
-
+function saveCover(book, coverEncoded) {
+    try {
+        const cover = JSON.parse(coverEncoded)
+        book.coverImage = new Buffer.from(cover.data, 'base64')
+        book.coverImageType = cover.type
+    } catch (error) {
+       console.log(error)
+    }
+  }
+  
 
 module.exports = router

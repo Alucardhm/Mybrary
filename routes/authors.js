@@ -22,7 +22,8 @@ router.get('/', async (req,res) => {
 
 //New Author Route
 router.get('/new',(req,res) => {
-    res.render('authors/new', {author: new Author()})
+    res.render('authors/new', {author: new Author()}) 
+    // o objeto é um placeHolder pra no authors/_form_fields eu conseguir salvar a info se der algum erro no post já que o author só vai existir se der um erro no post
 })
 
 // Create Author Route
@@ -37,7 +38,7 @@ router.post('/', async (req,res) => {  // Responder a uma solicitação POST na 
           res.redirect(`authors`)
       } catch (error) {
           res.render('authors/new', {
-              author: author,
+              author: author, // se der algum erro eu mando o author com as informações que ele digitou pra pessoa não precisar digitar novamente
               errorMessage: 'Error creating Author'
           })
       }

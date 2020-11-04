@@ -1,4 +1,5 @@
 const express = require('express')
+const book = require('../models/book')
 const Book = require('../models/book')
 const router = express.Router()
 
@@ -6,7 +7,7 @@ const router = express.Router()
 
 router.get('/', async(req,res) => {
     let books
-    try {
+    try {                                          //ordem decrescente(pegar os mais recentes) e createdAt é o valor do model do book que tem como default o date.now
         books = await Book.find().sort({createdAt: 'desc'}).limit(10).exec()
     } catch (error) {
         books = []
