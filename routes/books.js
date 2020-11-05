@@ -3,6 +3,7 @@ const router = express.Router() //  criar uma instancia de router pra poder usar
 const Book = require('../models/book')
 const imageMimeTypes = ['image/jpge','image/png','image/gif']
 const Author = require('../models/author')
+const { restart } = require('nodemon')
 
 
 // All Books Route
@@ -32,7 +33,7 @@ router.get('/', async (req,res) => {
 
 //New Books  Route
 router.get('/new', async (req,res) => {
-   renderNewPage(res,new Book()) // mesma logica do /new do author
+   renderNewPage(res,new Book()) 
 })
 
 // Create Books Route   
@@ -49,9 +50,8 @@ router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na
     saveCover(book,req.body.cover)
  
     try {
-        const newBook =  await book.save()    
-        // res.redirect(`books/${newBook.id}`)
-        res.redirect('books')
+        const newBook = await book.save()
+        res.redirect(`/books/${newBook.id}`)
     } catch (error) {
         console.log(error)
         renderNewPage(res,book,true)
@@ -59,24 +59,109 @@ router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na
 
 })
 
+// Show Book Route
+router.get('/:id', async(req,res) => {
+    try {           
+        const book = await Book.findById(req.params.id).populate('author').exec() // vai pegar a data "author" do book e popular ele com as info do author e não só com o id dele 
+        res.render('books/show',{book})
+    } catch (error) {
+        res.redirect('/')
+    }
+})
+
+// Edit Book Route
+router.get('/:id/edit', async (req,res) => {
+    try {
+        const book = await Book.findById(req.params.id)
+        renderEditPage(res,book)
+    } catch (error) {
+        res.redirect('/')
+    }
+ })
+
+ // Update Books Route   
+router.put('/:id',  async (req,res) => {  // Responder a uma solicitação POST na rota raiz do authors (POST ROUTE)
+    let book;
+
+    try {
+        book = await Book.findById(req.params.id)
+        book.title = req.body.title
+        book.author = req.body.author // author is the <select> name
+        book.publishDate = new Date(req.body.publishDate)
+        book.pageCount = req.body.pageCount
+        book.description = req.body.description
+        if(req.body.cover != null && req.body.cover !== ''){
+            saveCover(book,req.body.cover)
+        }
+        await book.save()
+        res.redirect(`/books/${book.id}`)
+    } catch (error) {
+        console.log(error)
+       if(book != null){
+        renderEditPage(res,book,true)
+       }else{
+          res.redirect('/')
+       }
+    }
+
+})
+
+// Delete Book Page
+router.delete('/:id', async(req,res) => {
+    let book;
+    try {
+        book = await Book.findById(req.params.id)
+        await book.remove()
+        res.redirect('/books')
+    } catch (error) {
+        if(book !== null){
+            res.render('books/show',{
+                book,
+                errorMessage: 'Could not remove book'
+            })
+        }else{
+            res.redirect('/')
+        }
+    }
+})
+
+ 
+ async function renderNewPage(res,book,hasError = false){
+     renderFormPage(res,book,'new',hasError)
+ }
+
+async function renderEditPage(res, book, hasError = false){ 
+     renderFormPage(res,book,'edit',hasError)
+}
 
 
-async function renderNewPage(res, book, hasError = false){
+
+async function renderFormPage(res, book, form, hasError = false){
     try {
         const authors = await Author.find({})
         const params = {
             authors,
             book
         }
-        if(hasError) params.errorMessage = 'Error Creating Book'
-        res.render('books/new',params)
+        if(hasError){
+            if(form == 'edit'){
+                params.errorMessage = 'Error Updating book'
+            }else{
+                params.errorMessage = 'Error Creating book' 
+            }
+        }
+        
+        res.render(`books/${form}`,params)
     } catch (error) {
         console.log(error)
         res.redirect('/books')
     }
 }
 
+
+
 function saveCover(book, coverEncoded) {
+    if (coverEncoded == null) return
     try {
         const cover = JSON.parse(coverEncoded) // https://www.w3schools.com/js/js_json_parse.asp
         book.coverImage = new Buffer.from(cover.data, 'base64') // cria um buffer com a data do tipo base64

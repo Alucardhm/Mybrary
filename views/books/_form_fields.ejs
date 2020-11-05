@@ -7,8 +7,7 @@
     <label>Author</label>
     <select name="author">
         <% authors.forEach(author => { %>
-            <% if(author.id === book.author) { %>
-                <% console.log('Ver o motivo dessa msg ter aparecido no console') %>
+            <% if(author.id == book.author) { %> <!-- PARA NA TELA DE EDIT ELE AUTOMATICAMENTE SELECIONAR O AUTHOR DO LIVRO  -->
             <option selected label="<%= author.name %>" value="<%= author.id %>"></option>
             <% }else{ %>
                 <option label="<%= author.name %>" value="<%= author.id %>"></option>
@@ -34,5 +33,5 @@
 
 <div>
     <label>Description</label>
-    <textarea name="Description"><%= book.description %></textarea>
+    <textarea name="description"><%= book.description %></textarea>
 </div>
