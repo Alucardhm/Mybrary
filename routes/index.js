@@ -1,7 +1,7 @@
 const express = require('express')
 const book = require('../models/book')
 const Book = require('../models/book')
-const router = express.Router()
+const router = express.Router() //  criar uma instancia de router pra poder usar no app use
 
 
 

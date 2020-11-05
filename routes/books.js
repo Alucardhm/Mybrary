@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router() //  criar uma instancia de router pra poder usar no app use
 const Book = require('../models/book')
 const imageMimeTypes = ['image/jpge','image/png','image/gif']
 const Author = require('../models/author')
@@ -35,7 +35,7 @@ router.get('/new', async (req,res) => {
    renderNewPage(res,new Book()) // mesma logica do /new do author
 })
 
-// Create Books Route    //single file and cover is the name of the upload file input
+// Create Books Route   
 router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na rota raiz do authors (POST ROUTE)
     const fileName = req.file != null ? req.file.filename : null
     const book = new Book({
@@ -43,7 +43,7 @@ router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na
         author: req.body.author,
         publishDate: new Date(req.body.publishDate),
         pageCount: req.body.pageCount,
-        coverImageName: fileName,
+       // coverImageName: fileName,
         description: req.body.description
     })
     saveCover(book,req.body.cover)
@@ -78,8 +78,8 @@ async function renderNewPage(res, book, hasError = false){
 
 function saveCover(book, coverEncoded) {
     try {
-        const cover = JSON.parse(coverEncoded)
-        book.coverImage = new Buffer.from(cover.data, 'base64')
+        const cover = JSON.parse(coverEncoded) // https://www.w3schools.com/js/js_json_parse.asp
+        book.coverImage = new Buffer.from(cover.data, 'base64') // cria um buffer com a data do tipo base64
         book.coverImageType = cover.type
     } catch (error) {
        console.log(error)
@@ -88,3 +88,4 @@ function saveCover(book, coverEncoded) {
   
 
 module.exports = router
+
