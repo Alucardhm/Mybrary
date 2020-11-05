@@ -3,7 +3,6 @@ const router = express.Router() //  criar uma instancia de router pra poder usar
 const Book = require('../models/book')
 const imageMimeTypes = ['image/jpge','image/png','image/gif']
 const Author = require('../models/author')
-const { restart } = require('nodemon')
 
 
 // All Books Route
