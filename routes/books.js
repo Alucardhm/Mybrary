@@ -163,8 +163,10 @@ function saveCover(book, coverEncoded) {
     if (coverEncoded == null) return
     try {
         const cover = JSON.parse(coverEncoded) // https://www.w3schools.com/js/js_json_parse.asp
-        book.coverImage = new Buffer.from(cover.data, 'base64') // cria um buffer com a data do tipo base64
-        book.coverImageType = cover.type
+        if(cover != null && imageMimeTypes.includes(cover.type)){
+            book.coverImage = new Buffer.from(cover.data, 'base64') // cria um buffer com a data do tipo base64
+            book.coverImageType = cover.type
+        }
     } catch (error) {
        console.log(error)
     }
