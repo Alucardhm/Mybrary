@@ -1,24 +1,27 @@
 <h2 class="page-header">Search Book</h2>
 
 <!-- Os searchOptions. dos value dos input são para salvar as info de pesquisa pra não resetar quando alguem pesquisar  -->
-
 <form action="/books" method="GET"> <!-- REDIRECTS TO THE AUTHORS ".GET" ROUTE -->
-    <div>
-        <label>Ttile</label>
-        <input type="text" name="title" value="<%= searchOptions.title %>">
+    <div class="form-row">
+        <div class="form-item">
+            <label>Ttile</label>
+            <input type="text" name="title" value="<%= searchOptions.title %>"> 
+        </div>
     </div>
 
-    <div>
-        <label>Published After</label>
-        <input type="date" name="publishedAfter" value="<%= searchOptions.publishedAfter %>">
+    <div class="form-row">
+        <div class="form-item">
+            <label>Published After</label>
+            <input type="date" name="publishedAfter" value="<%= searchOptions.publishedAfter %>">
+        </div>
+        <div class="form-item">
+            <label>Published Before</label>
+            <input type="date" name="publishedBefore" value="<%= searchOptions.publishedBefore %>">
+        </div>
     </div>
-
-    <div>
-        <label>Published Before</label>
-        <input type="date" name="publishedBefore" value="<%= searchOptions.publishedBefore %>">
+    <div class="form-row form-row-end">
+        <button class="btn btn-danger" type="submit">Search</button>
     </div>
-
-    <button type="submit">Search</button>
 </form>
 
 <div>

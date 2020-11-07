@@ -61,9 +61,10 @@ router.post('/',  async (req,res) => {  // Responder a uma solicitação POST na
 // Show Book Route
 router.get('/:id', async(req,res) => {
     try {           
-        const book = await Book.findById(req.params.id).populate('author').exec() // vai pegar a data "author" do book e popular ele com as info do author e não só com o id dele 
+        const book = await Book.findById(req.params.id).populate('author').exec() // vai pegar a data "author" ver que é um id de outra data e vai popular as info com tudo dele
         res.render('books/show',{book})
     } catch (error) {
+        console.log(error)
         res.redirect('/')
     }
 })
@@ -167,7 +168,7 @@ function saveCover(book, coverEncoded) {
             book.coverImage = new Buffer.from(cover.data, 'base64') // cria um buffer com a data do tipo base64
             book.coverImageType = cover.type
         }
-    } catch (error) {
+    } catch(error) {
        console.log(error)
     }
   }

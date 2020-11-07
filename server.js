@@ -27,6 +27,8 @@ app.use(express.urlencoded({limit: '10mb', extended: false }))
 
 
 
+
+
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DATABASE_URL, { //  no local queremos usar uma database local (LINHA 1 SERVER.JS)
     //mas já em um server a gente quer conectar com uma database que esta em algum servidor
@@ -38,6 +40,7 @@ const db = mongoose.connection
 db.on('error',error => console.log(error))
 db.once('open',() => console.log('Connected to Mongoose'))
 
+// cria funções que vao ser executadas  para qualquer tipo de solicitação HTTP no caminho dado
 app.use('/',indexRouter)
 app.use('/authors',authorRouter)
 app.use('/books',bookRouter)
