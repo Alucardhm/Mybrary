@@ -1,6 +1,7 @@
 <h2 class="page-header">Search Authors</h2>
 
-<form action="/authors" method="GET"> <!-- REDIRECTS TO THE AUTHORS ".GET" ROUTE -->
+<form action="/authors" method="GET">
+    <!-- REDIRECTS TO THE AUTHORS ".GET" ROUTE -->
     <div class="form-row">
         <div class="form-item">
             <label>Name</label>
@@ -13,10 +14,12 @@
 </form>
 <br>
 <% authors.forEach(author => {%>
-    <div><%= author.name%></div>
-<div class="btn-row">
-    <a href="/authors/<%= author.id %>" class="btn btn-primary">View</a>
-    <a href="/authors/<%= author.id %>/edit" class="btn btn-primary">Edit</a>
-    <%- include('../partials/deleteForm',{ url : `/authors/${author.id}`}) %>
+<div class="author-row">
+    <div class="author-name"><%= author.name%></div>
+    <div class="btn-row">
+        <a href="/authors/<%= author.id %>" class="btn btn-primary">View</a>
+        <a href="/authors/<%= author.id %>/edit" class="btn btn-primary">Edit</a>
+        <%- include('../partials/deleteForm',{ url : `/authors/${author.id}`}) %>
+    </div>
 </div>
 <% }) %>
